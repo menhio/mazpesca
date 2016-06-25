@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Custom code for rule - Parametros de Costos
  */
@@ -9,10 +8,16 @@
 $today = date('d-m-Y');
 
 // Load fields from Existencias Semanales
+/*
+ * field_diesel_exist
+ */
 $nid = $node->nid;
 $exist_wrapper = entity_metadata_wrapper('node', $nid);
-$diesel = $exist_wrapper->field_diesel_exist->value();
+$diesel_actual = $exist_wrapper->field_diesel_exist->value(); 
 
+/*
+ * Query to get the Barco Viaje NID
+ */
 $query = db_select('field_data_field_barco_viaje_semanal', 'bvsemanal');
 $query->addField('bvsemanal', 'field_barco_viaje_semanal_target_id', 'bvtid');
 $query->addField('bvsemanal', 'entity_id', 'eid');
@@ -23,6 +28,9 @@ foreach ($results as $result) {
   $bvnid = $result->bvtid;
 }
 
+/*
+ * Query to get the Parametros de Costos NID
+ */
 $query2 = db_select('field_data_field_barco_viaje_param', 'bvparam');
 $query2->addField('bvparam', 'entity_id', 'eidparam');
 $query2->addField('bvparam', 'field_barco_viaje_param_target_id', 'tidparam');
@@ -32,6 +40,27 @@ $results2 = $exeResults2->fetchAll();
 foreach ($results2 as $result2) {
   $eidparam = $result2->eidparam;
 }
+
+/*
+ * Query to get the sum of all fish until today.
+ */
+$query3 = db_select('field_data_field_buscar_viaje_diario', 'rdiatid');
+$query3->join('field_data_field_total_capt_diario', 'joincapt', 'rdiatid.entity_id = joincapt.entity_id');
+$query3->addField('rdiatid', 'entity_id', 'eidiario');
+$query3->addField('rdiatid', 'field_buscar_viaje_diario_target_id', 'tidiario');
+$query3->addField('joincapt', 'field_total_capt_diario_value', 'totalcapt');
+$query3->condition('rdiatid.field_buscar_viaje_diario_target_id', $bvnid, '=');
+$query3->addExpression('SUM(field_total_capt_diario_value)', 'totalsum');
+$exeResults3 = $query3->execute();
+$results3 = $exeResults3->fetchAll();
+foreach ($results3 as $result3) {
+  $tidiario = $result3->tidiario;
+  /*
+   * Toneladas Acumuladas
+   */
+  $totalsum = $result3->totalsum;
+}
+
 // Load fields from Parametros de Costos
 /*
  * field_costo_variable_param
@@ -53,19 +82,41 @@ $fecha_zarpe = date('d-m-Y', $param->field_fecha_zarpe_viaje->value());
  * Calculate Days from Departure
  */
 $dias = strtotime($today) - strtotime($fecha_zarpe);
+/*
+ * Dias de Pesca
+ */
 $dias_pesca = floor($dias/3600/24);
+
+/*
+ * Costo por Tonelada
+ * 
+ */
+$dias_costo_fijo = $dias_pesca * $costo_fijo;
+$total_costo_variable = $totalsum * $costo_variable;
+$costos = $dias_costo_fijo + $total_costo_variable;
+$litros_diesel = ($exist_diesel - $diesel_actual) * $precio_diesel;
+$costo_tonelada = ($costos + $litros_diesel)/$totalsum; 
 
 drupal_set_message(t('NID Existencias: @nid Diesel: @diesel NID Viaje: @tid '
     . 'NID Parametros: @eidparam Precio del Diesel: @precio_diesel '
-    . 'Fecha de Zarpe: @fecha_zarpe Dias de Pesca: @dias_pesca', 
+    . 'Fecha de Zarpe: @fecha_zarpe Dias de Pesca: @dias_pesca '
+    . 'Total de Captura: @totalsum Costo por Tonelada: @costo_tonelada '
+    . 'Costos: @costos Litros: @litros '
+    . 'Dias Costo Fijo: @dias_costo_fijo '
+    . 'Total Costo Variable: @total_costo_variable', 
     array(
       '@nid' => $nid, 
-      '@diesel' => $diesel, 
+      '@diesel' => $diesel_actual, 
       '@tid' => $bvnid, 
       '@eidparam' => $eidparam, 
       '@precio_diesel' => $precio_diesel,
       '@fecha_zarpe' => $fecha_zarpe,
       '@dias_pesca' => $dias_pesca,
+      '@totalsum' => $totalsum,
+      '@costo_tonelada' => number_format($costo_tonelada, 2),
+      '@costos' =>  number_format($costos, 2),
+      '@litros' => $litros_diesel,
+      '@dias_costo_fijo' => $dias_costo_fijo,
+      '@total_costo_variable' => $total_costo_variable,
     )));
-
 ?>
