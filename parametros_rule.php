@@ -1,7 +1,12 @@
 <?php
+
 /*
  * Custom code for rule - Parametros de Costos
  */
+/*
+ * Load today date
+ */
+$today = date('d-m-Y');
 
 // Load fields from Existencias Semanales
 $nid = $node->nid;
@@ -38,11 +43,18 @@ foreach ($results2 as $result2) {
  */
 $param = entity_metadata_wrapper('node', $eidparam);
 $precio_diesel = $param->field_precio_diesel_param->value();
-$fecha_zarpe = $param->field_fecha_zarpe_viaje->value();
+//$fecha_zarpe = $param->field_fecha_zarpe_viaje->value();
+$fecha_zarpe = date('d/m/Y', $param->field_fecha_zarpe_viaje->value());
+
+/*
+ * Calculate Days from Departure
+ */
+$dias = strtotime($today) - strtotime($fecha_zarpe);
+$dias_pesca = floor($dias/3600/24);
 
 drupal_set_message(t('NID Existencias: @nid Diesel: @diesel NID Viaje: @tid '
     . 'NID Parametros: @eidparam Precio del Diesel: @precio_diesel '
-    . 'Fecha de Zarpe: @fecha_zarpe', 
+    . 'Fecha de Zarpe: @fecha_zarpe Dias de Pesca: @dias_pesca', 
     array(
       '@nid' => $nid, 
       '@diesel' => $diesel, 
@@ -50,6 +62,7 @@ drupal_set_message(t('NID Existencias: @nid Diesel: @diesel NID Viaje: @tid '
       '@eidparam' => $eidparam, 
       '@precio_diesel' => $precio_diesel,
       '@fecha_zarpe' => $fecha_zarpe,
+      '@dias_pesca' => $dias_pesca,
     )));
 
 ?>
