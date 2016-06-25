@@ -42,9 +42,12 @@ foreach ($results2 as $result2) {
  * field_fecha_zarpe_viaje
  */
 $param = entity_metadata_wrapper('node', $eidparam);
+$costo_variable = $param->field_costo_variable_param->value();
+$costo_fijo = $param->field_costo_fijo_param->value();
+$exist_diesel = $param->field_exist_diesel_param->value();
 $precio_diesel = $param->field_precio_diesel_param->value();
-//$fecha_zarpe = $param->field_fecha_zarpe_viaje->value();
-$fecha_zarpe = date('d/m/Y', $param->field_fecha_zarpe_viaje->value());
+$viaje = $param->field_viaje->value();
+$fecha_zarpe = date('d-m-Y', $param->field_fecha_zarpe_viaje->value());
 
 /*
  * Calculate Days from Departure
