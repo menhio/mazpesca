@@ -1,4 +1,9 @@
 <?php
+/*
+ * Custom code for rule - Parametros de Costos
+ */
+
+// Load fields from Existencias Semanales
 $nid = $node->nid;
 $exist_wrapper = entity_metadata_wrapper('node', $nid);
 $diesel = $exist_wrapper->field_diesel_exist->value();
@@ -23,11 +28,28 @@ foreach ($results2 as $result2) {
   $eidparam = $result2->eidparam;
 }
 // Load fields from Parametros de Costos
+/*
+ * field_costo_variable_param
+ * field_costo_fijo_param
+ * field_exist_diesel_param
+ * field_precio_diesel_param
+ * field_viaje
+ * field_fecha_zarpe_viaje
+ */
 $param = entity_metadata_wrapper('node', $eidparam);
 $precio_diesel = $param->field_precio_diesel_param->value();
+$fecha_zarpe = $param->field_fecha_zarpe_viaje->value();
 
-drupal_set_message(t('NID Existencias: @nid Diesel: @diesel NID Viaje: @tid NID Parametros: @eidparam Precio del Diesel: @precio_diesel', 
-    array('@nid' => $nid, '@diesel' => $diesel, '@tid' => $bvnid, '@eidparam' => $eidparam, '@precio_diesel' => $precio_diesel)
-));
+drupal_set_message(t('NID Existencias: @nid Diesel: @diesel NID Viaje: @tid '
+    . 'NID Parametros: @eidparam Precio del Diesel: @precio_diesel '
+    . 'Fecha de Zarpe: @fecha_zarpe', 
+    array(
+      '@nid' => $nid, 
+      '@diesel' => $diesel, 
+      '@tid' => $bvnid, 
+      '@eidparam' => $eidparam, 
+      '@precio_diesel' => $precio_diesel,
+      '@fecha_zarpe' => $fecha_zarpe,
+    )));
 
 ?>
