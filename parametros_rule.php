@@ -14,6 +14,7 @@ $today = date('Y-m-d');
 $nid = $node->nid;
 $exist_wrapper = entity_metadata_wrapper('node', $nid);
 $diesel_actual = $exist_wrapper->field_diesel_exist->value(); 
+$fecha_exist = $exist_wrapper->field_fecha_exist->value();
 
 /*
  * Query to get the Barco Viaje NID
@@ -112,4 +113,23 @@ drupal_set_message(t('NID Existencias: @nid Diesel: @diesel NID Viaje: @tid '
       '@totalsum' => $totalsum,
       '@costo_tonelada' => number_format($costo_tonelada, 2),
     )));
+
+// Create the Entity: parametros_semanale
+global $user;
+$values = array(
+  'type' => 'parametros_semanales',
+  'uid' => $user->uid,
+  'status' => 1,
+  'comment' => 0,
+  'promote' => 0,
+);
+$node = entity_create('node', $values);
+
+$entity = entity_metadata_wrapper('node', $node);
+$entity->field_barco_viaje_sparam->set($bvnid);
+$entity->field_dias_de_pesca_sparam->set($dias_pesca);
+$entity->field_toneladas_sparam->set($totalsum);
+$entity->field_costo_sparam->set($costo_tonelada);
+$entity->field_fecha_sparam->set($fecha_exist);
+$entity->save();
 ?>
