@@ -115,6 +115,19 @@ drupal_set_message(t('NID Existencias: @nid Diesel: @diesel NID Viaje: @tid '
     )));
 
 $uidparam = strval($nid) . strval($bvnid) . strval($eidparam);
+
+$queryuid = db_select('field_data_field_uid_sparam', 'uidtable');
+$queryuid->addField('uidtable', 'field_uid_sparam_value', 'uidvalue');
+$queryuid->addField('uidtable', 'entity_id', 'eidsparam');
+$queryuid->condition('uidtable.field_uid_sparam_value', $uidparam, '=');
+$uidresults = $queryuid->execute();
+$uidres = $uidresults->fetchAll();
+foreach ($uidres as $uids) {
+  $uidvalue = $uids->uidvalue;
+  $eidsparam = $uids->eidsparam;
+}
+
+
 // Create the Entity: parametros_semanale
 global $user;
 $values = array(
@@ -124,14 +137,24 @@ $values = array(
   'comment' => 0,
   'promote' => 0,
 );
-$node = entity_create('node', $values);
 
-$entity = entity_metadata_wrapper('node', $node);
-$entity->field_barco_viaje_sparam->set($bvnid);
-$entity->field_dias_de_pesca_sparam->set($dias_pesca);
-$entity->field_toneladas_sparam->set($totalsum);
-$entity->field_costo_sparam->set($costo_tonelada);
-$entity->field_fecha_sparam->set($fecha_exist);
-$entity->field_uid_sparam->set($uidparam);
-$entity->save();
+if ($uidparam == $uidvalue) {
+  // Update Parametros de Costos Semanal
+  $entity = entity_metadata_wrapper('node', $eidsparam);
+  $entity->field_costo_sparam->set($costo_tonelada);
+  $entity->save();
+}
+else {
+  //Create Parametros de Costos Semanal
+  $node = entity_create('node', $values);
+
+  $entity = entity_metadata_wrapper('node', $node);
+  $entity->field_barco_viaje_sparam->set($bvnid);
+  $entity->field_dias_de_pesca_sparam->set($dias_pesca);
+  $entity->field_toneladas_sparam->set($totalsum);
+  $entity->field_costo_sparam->set($costo_tonelada);
+  $entity->field_fecha_sparam->set($fecha_exist);
+  $entity->field_uid_sparam->set($uidparam);
+  $entity->save();
+}
 ?>
