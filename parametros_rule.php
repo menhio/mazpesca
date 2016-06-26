@@ -114,6 +114,7 @@ drupal_set_message(t('NID Existencias: @nid Diesel: @diesel NID Viaje: @tid '
       '@costo_tonelada' => number_format($costo_tonelada, 2),
     )));
 
+$uidparam = strval($nid) . strval($bvnid) . strval($eidparam);
 // Create the Entity: parametros_semanale
 global $user;
 $values = array(
@@ -131,5 +132,6 @@ $entity->field_dias_de_pesca_sparam->set($dias_pesca);
 $entity->field_toneladas_sparam->set($totalsum);
 $entity->field_costo_sparam->set($costo_tonelada);
 $entity->field_fecha_sparam->set($fecha_exist);
+$entity->field_uid_sparam->set($uidparam);
 $entity->save();
 ?>
