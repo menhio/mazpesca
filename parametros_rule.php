@@ -5,7 +5,7 @@
 /*
  * Load today date
  */
-$today = date('d-m-Y');
+$today = date('Y-m-d');
 
 // Load fields from Existencias Semanales
 /*
@@ -76,7 +76,7 @@ $costo_fijo = $param->field_costo_fijo_param->value();
 $exist_diesel = $param->field_exist_diesel_param->value();
 $precio_diesel = $param->field_precio_diesel_param->value();
 $viaje = $param->field_viaje->value();
-$fecha_zarpe = date('d-m-Y', $param->field_fecha_zarpe_viaje->value());
+$fecha_zarpe = date('Y-m-d', $param->field_fecha_zarpe_viaje->value());
 
 /*
  * Calculate Days from Departure
@@ -100,10 +100,7 @@ $costo_tonelada = ($costos + $litros_diesel)/$totalsum;
 drupal_set_message(t('NID Existencias: @nid Diesel: @diesel NID Viaje: @tid '
     . 'NID Parametros: @eidparam Precio del Diesel: @precio_diesel '
     . 'Fecha de Zarpe: @fecha_zarpe Dias de Pesca: @dias_pesca '
-    . 'Total de Captura: @totalsum Costo por Tonelada: @costo_tonelada '
-    . 'Costos: @costos Litros: @litros '
-    . 'Dias Costo Fijo: @dias_costo_fijo '
-    . 'Total Costo Variable: @total_costo_variable', 
+    . 'Total de Captura: @totalsum Costo por Tonelada: @costo_tonelada ',
     array(
       '@nid' => $nid, 
       '@diesel' => $diesel_actual, 
@@ -114,9 +111,5 @@ drupal_set_message(t('NID Existencias: @nid Diesel: @diesel NID Viaje: @tid '
       '@dias_pesca' => $dias_pesca,
       '@totalsum' => $totalsum,
       '@costo_tonelada' => number_format($costo_tonelada, 2),
-      '@costos' =>  number_format($costos, 2),
-      '@litros' => $litros_diesel,
-      '@dias_costo_fijo' => $dias_costo_fijo,
-      '@total_costo_variable' => $total_costo_variable,
     )));
 ?>
