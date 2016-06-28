@@ -98,22 +98,6 @@ $costos = $dias_costo_fijo + $total_costo_variable;
 $litros_diesel = ($exist_diesel - $diesel_actual) * $precio_diesel;
 $costo_tonelada = ($costos + $litros_diesel)/$totalsum; 
 
-drupal_set_message(t('NID Existencias: @nid Diesel: @diesel NID Viaje: @tid '
-    . 'NID Parametros: @eidparam Precio del Diesel: @precio_diesel '
-    . 'Fecha de Zarpe: @fecha_zarpe Dias de Pesca: @dias_pesca '
-    . 'Total de Captura: @totalsum Costo por Tonelada: @costo_tonelada ',
-    array(
-      '@nid' => $nid, 
-      '@diesel' => $diesel_actual, 
-      '@tid' => $bvnid, 
-      '@eidparam' => $eidparam, 
-      '@precio_diesel' => $precio_diesel,
-      '@fecha_zarpe' => $fecha_zarpe,
-      '@dias_pesca' => $dias_pesca,
-      '@totalsum' => $totalsum,
-      '@costo_tonelada' => number_format($costo_tonelada, 2),
-    )));
-
 $uidparam = strval($nid) . strval($bvnid) . strval($eidparam);
 
 $queryuid = db_select('field_data_field_uid_sparam', 'uidtable');
@@ -143,6 +127,10 @@ if ($uidparam == $uidvalue) {
   $entity = entity_metadata_wrapper('node', $eidsparam);
   $entity->field_costo_sparam->set($costo_tonelada);
   $entity->save();
+  drupal_set_message(t('Parámetros actualizados correctamente. El costo por tonelada de '
+      . 'esta semana fue: @costo_tonelada', array(
+        '@costo_tonelada' => number_format($costo_tonelada, 2),
+      )));
 }
 else {
   //Create Parametros de Costos Semanal
@@ -156,5 +144,10 @@ else {
   $entity->field_fecha_sparam->set($fecha_exist);
   $entity->field_uid_sparam->set($uidparam);
   $entity->save();
+  
+  drupal_set_message(t('Parámetros creados existosamente. El costo por tonelada de '
+      . 'esta semana fue: @costo_tonelada', array(
+        '@costo_tonelada' => number_format($costo_tonelada, 2),
+      )));
 }
 ?>
