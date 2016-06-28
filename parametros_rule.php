@@ -7,8 +7,8 @@
  */
 $today = date('Y-m-d');
 
-// Load fields from Existencias Semanales
 /*
+ * Load fields from Existencias Semanales
  * field_diesel_exist
  */
 $nid = $node->nid;
@@ -62,8 +62,8 @@ foreach ($results3 as $result3) {
   $totalsum = $result3->totalsum;
 }
 
-// Load fields from Parametros de Costos
 /*
+ * Load fields from Parametros de Costos
  * field_costo_variable_param
  * field_costo_fijo_param
  * field_exist_diesel_param
