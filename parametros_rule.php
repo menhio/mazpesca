@@ -16,6 +16,7 @@ $nid = $node->nid;
 $exist_wrapper = entity_metadata_wrapper('node', $nid);
 $diesel_actual = $exist_wrapper->field_diesel_exist->value(); 
 $fecha_exist = $exist_wrapper->field_fecha_exist->value();
+$tons_abordo = $exist_wrapper->field_tons_abordo_exist->value();
 
 /*
  * Query to get the Barco Viaje NID
@@ -94,10 +95,12 @@ $dias_pesca = floor($dias/3600/24);
  * 
  */
 $dias_costo_fijo = $dias_pesca * $costo_fijo;
-$total_costo_variable = $totalsum * $costo_variable;
+//$total_costo_variable = $totalsum * $costo_variable;
+$total_costo_variable = $tons_abordo * $costo_variable;
 $costos = $dias_costo_fijo + $total_costo_variable;
 $litros_diesel = ($exist_diesel - $diesel_actual) * $precio_diesel;
-$costo_tonelada = ($costos + $litros_diesel)/$totalsum; 
+//$costo_tonelada = ($costos + $litros_diesel)/$totalsum; 
+$costo_tonelada = ($costos + $litros_diesel)/$tons_abordo; 
 
 $uidparam = strval($nid) . strval($bvnid) . strval($eidparam);
 
@@ -128,7 +131,8 @@ if ($uidparam == $uidvalue) {
   $entity = entity_metadata_wrapper('node', $eidsparam);
   $entity->field_costo_sparam->set($costo_tonelada);
   $entity->field_dias_de_pesca_sparam->set($dias_pesca);
-  $entity->field_toneladas_sparam->set($totalsum);
+  //$entity->field_toneladas_sparam->set($totalsum);
+  $entity->field_toneladas_sparam->set($tons_abordo);
   $entity->save();
   drupal_set_message(t('Parámetros actualizados correctamente. El costo por tonelada de '
       . 'esta semana fue: @costo_tonelada', array(
@@ -142,7 +146,8 @@ else {
   $entity = entity_metadata_wrapper('node', $node);
   $entity->field_barco_viaje_sparam->set($bvnid);
   $entity->field_dias_de_pesca_sparam->set($dias_pesca);
-  $entity->field_toneladas_sparam->set($totalsum);
+  //$entity->field_toneladas_sparam->set($totalsum);
+  $entity->field_toneladas_sparam->set($tons_abordo);
   $entity->field_costo_sparam->set($costo_tonelada);
   $entity->field_fecha_sparam->set($fecha_exist);
   $entity->field_uid_sparam->set($uidparam);
