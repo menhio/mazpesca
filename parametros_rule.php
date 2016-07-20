@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Custom code for rule - Parametros de Costos
  */
@@ -154,9 +153,9 @@ else {
   $entity->save();
   
   drupal_set_message(t('Parámetros creados existosamente. El costo por tonelada de '
-      . 'esta semana fue: @costo_tonelada', array(
+      . 'esta semana fue: @costo_tonelada. Toneladas abordo: @tons_abordo.', array(
         '@costo_tonelada' => number_format($costo_tonelada, 2),
+        '@tons_abordo' => $tons_abordo,
       )));
 }
-
 ?>
