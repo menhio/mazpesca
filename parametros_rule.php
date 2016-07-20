@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Custom code for rule - Parametros de Costos
  */
@@ -7,8 +8,8 @@
  */
 $today = date('Y-m-d');
 
+// Load fields from Existencias Semanales
 /*
- * Load fields from Existencias Semanales
  * field_diesel_exist
  */
 $nid = $node->nid;
@@ -62,8 +63,8 @@ foreach ($results3 as $result3) {
   $totalsum = $result3->totalsum;
 }
 
+// Load fields from Parametros de Costos
 /*
- * Load fields from Parametros de Costos
  * field_costo_variable_param
  * field_costo_fijo_param
  * field_exist_diesel_param
@@ -126,6 +127,8 @@ if ($uidparam == $uidvalue) {
   // Update Parametros de Costos Semanal
   $entity = entity_metadata_wrapper('node', $eidsparam);
   $entity->field_costo_sparam->set($costo_tonelada);
+  $entity->field_dias_de_pesca_sparam->set($dias_pesca);
+  $entity->field_toneladas_sparam->set($totalsum);
   $entity->save();
   drupal_set_message(t('Parámetros actualizados correctamente. El costo por tonelada de '
       . 'esta semana fue: @costo_tonelada', array(
@@ -150,4 +153,5 @@ else {
         '@costo_tonelada' => number_format($costo_tonelada, 2),
       )));
 }
+
 ?>
